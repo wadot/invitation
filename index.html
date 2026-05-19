@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You are Invited!</title>
+    <style>
+        :root {
+            --bg-color: #f8f5f0;
+            --pink-main: #f0b4bc;
+            --pink-dark: #e59ba5;
+            --pink-soft: #fae1e4;
+            --text-dark: #4f4f4f;
+            --button-color: #b2dae2;
+            --button-hover: #9acbd5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Title Style */
+        .main-title {
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 3rem;
+            color: var(--text-dark);
+            margin: 0 0 50px 0;
+            letter-spacing: 2px;
+            text-align: center;
+            z-index: 10;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+        }
+
+        .main-title.fade-out {
+            transform: translateY(-40px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Envelope Container */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            width: 450px;
+            height: 300px;
+            transform: translateY(0);
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 1. Base Backboard */
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: var(--pink-main);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        /* 2. Top Flap */
+        .top-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 225px solid transparent;
+            border-right: 225px solid transparent;
+            border-top: 155px solid var(--pink-dark);
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.3s;
+            z-index: 5;
+        }
+
+        /* 3. Front Flaps Pocket */
+        .envelope-front-pocket {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .envelope-front-pocket::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-left: 225px solid var(--pink-soft);
+            border-right: 225px solid transparent;
+            border-bottom: 300px solid transparent;
+            border-bottom-left-radius: 12px;
+        }
+
+        .envelope-front-pocket::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            border-right: 225px solid var(--pink-soft);
+            border-left: 225px solid transparent;
+            border-bottom: 300px solid transparent;
+            border-bottom-right-radius: 12px;
+        }
+
+        .bottom-flap {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-left: 225px solid transparent;
+            border-right: 225px solid transparent;
+            border-bottom: 150px solid var(--pink-main);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 4;
+            filter: drop-shadow(0 -3px 5px rgba(0,0,0,0.05));
+        }
+
+        /* 4. The Invitation Card */
+        .card {
+            position: absolute;
+            bottom: 10px;
+            left: 25px;
+            width: 400px;
+            height: 270px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            z-index: 2; 
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            border: 1px solid #f2f2f2;
+            
+            opacity: 0;
+            transform: translateY(0) scale(0.95);
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, z-index 0.5s;
+        }
+
+        .card h1 {
+            font-size: 1.7rem;
+            margin: 0;
+            color: var(--text-dark);
+            letter-spacing: 1px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #727272;
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        .event-details {
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .action-btn {
+            background-color: var(--button-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+            background-color: var(--button-hover);
+        }
+
+        /* --- ANIMATION TRANSITIONS --- */
+
+        .envelope-wrapper.open {
+            transform: translateY(60px);
+        }
+
+        .envelope-wrapper.open .top-flap {
+            transform: rotateX(180deg);
+            z-index: 1; 
+        }
+
+        .envelope-wrapper.open .card {
+            opacity: 1;
+            transform: translateY(-250px) scale(1);
+            z-index: 6; 
+            height: 310px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="main-title" id="mainTitle">You are Invited!</h1>
+
+    <div class="envelope-wrapper" id="envelopeWrapper" onclick="toggleEnvelope()">
+        <div class="envelope-back"></div>
+        <div class="top-flap"></div>
+        
+        <div class="card" onclick="event.stopPropagation();">
+            <div>
+                <h1>Join the Celebration</h1>
+                <p>We would be absolutely delighted to have you celebrate with us.</p>
+            </div>
+
+            <div class="event-details">
+                <p style="color: #333; margin-bottom: 4px;"><strong>September 12, 2026 at 3:00 PM</strong></p>
+                <p style="font-size: 0.9rem; color: #777; margin: 0;">The Grand Garden, Sunflower Lane</p>
+            </div>
+
+            <button class="action-btn" onclick="handleButtonClick()">Find Out More</button>
+        </div>
+
+        <div class="envelope-front-pocket"></div>
+        <div class="bottom-flap"></div>
+    </div>
+
+    <script>
+        function toggleEnvelope() {
+            const wrapper = document.getElementById('envelopeWrapper');
+            const title = document.getElementById('mainTitle');
+            
+            wrapper.classList.toggle('open');
+            title.classList.toggle('fade-out');
+        }
+
+        function handleButtonClick() {
+            alert("Thank you! We look forward to seeing you.");
+        }
+    </script>
+</body>
+</html>
