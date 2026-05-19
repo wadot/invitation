@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You are Invited!</title>
+    <title>Boy or Girl?</title>
     <style>
         :root {
             --bg-color: #f8f5f0;
@@ -11,8 +11,8 @@
             --pink-dark: #e59ba5;
             --pink-soft: #fae1e4;
             --text-dark: #4f4f4f;
-            --button-color: #b2dae2;
-            --button-hover: #9acbd5;
+            --boy-blue: #88c9d9;
+            --girl-pink: #f4a6b5;
         }
 
         body {
@@ -132,16 +132,16 @@
             left: 25px;
             width: 400px;
             height: 270px;
-            background-color: #ffffff;
+            background-color: #fdfdfd;
             border-radius: 8px;
             z-index: 2; 
-            padding: 30px;
+            padding: 35px 25px 25px 25px;
             box-sizing: border-box;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             text-align: center;
             border: 1px solid #f2f2f2;
             
@@ -150,50 +150,54 @@
             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease, z-index 0.5s;
         }
 
-        .card h1 {
-            font-size: 1.7rem;
-            margin: 0;
-            color: var(--text-dark);
+        /* Gender Reveal Specific Styling */
+        .gender-reveal-title {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
             letter-spacing: 1px;
-            font-family: Georgia, 'Times New Roman', Times, serif;
         }
 
-        .card p {
-            font-size: 0.95rem;
+        .word-boy {
+            color: var(--boy-blue);
+        }
+
+        .word-or {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            margin: 0 8px;
+            vertical-align: middle;
+            font-family: Georgia, serif;
+        }
+
+        .word-girl {
+            color: var(--girl-pink);
+        }
+
+        .card p.subtitle {
+            font-size: 1rem;
             color: #727272;
-            margin: 5px 0;
+            margin: 10px 0 25px 0;
             line-height: 1.5;
+            font-family: Georgia, serif;
+            font-style: italic;
         }
 
         .event-details {
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 12px 0;
+            border-top: 1px dashed #ddd;
+            border-bottom: 1px dashed #ddd;
+            padding: 15px 0;
             width: 100%;
-            margin: 5px 0;
+            margin-top: auto;
+            margin-bottom: 10px;
         }
 
-        .action-btn {
-            background-color: var(--button-color);
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s, background-color 0.2s;
-            letter-spacing: 0.5px;
-        }
-
-        .action-btn:hover {
-            transform: scale(1.05);
-            background-color: var(--button-hover);
+        .event-details p {
+            margin: 0;
         }
 
         /* --- ANIMATION TRANSITIONS --- */
-
         .envelope-wrapper.open {
             transform: translateY(60px);
         }
@@ -211,6 +215,9 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
     </style>
+    
+    <!-- Added canvas-confetti library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
@@ -221,17 +228,21 @@
         <div class="top-flap"></div>
         
         <div class="card" onclick="event.stopPropagation();">
-            <div>
-                <h1>Join the Celebration</h1>
-                <p>We would be absolutely delighted to have you celebrate with us.</p>
+            
+            <div class="gender-reveal-title">
+                <span class="word-boy">BOY</span>
+                <span class="word-or">OR</span>
+                <span class="word-girl">GIRL?</span>
             </div>
+            
+            <p class="subtitle">Come help us guess the sweet mystery!</p>
 
             <div class="event-details">
-                <p style="color: #333; margin-bottom: 4px;"><strong>September 12, 2026 at 3:00 PM</strong></p>
-                <p style="font-size: 0.9rem; color: #777; margin: 0;">The Grand Garden, Sunflower Lane</p>
+                <p style="color: #444; margin-bottom: 6px; font-size: 1.1rem;"><strong>June 13, 2026 at 2:00 PM</strong></p>
+                <p style="font-size: 0.95rem; color: #888;">Junbel Mountain Resort</p>
+                <a style="font-size: 0.95rem; color: #888;" href="https://surl.li/xmyidf" target="_blank" rel="noopener noreferrer">View Location</a>
             </div>
-
-            <button class="action-btn" onclick="handleButtonClick()">Find Out More</button>
+            
         </div>
 
         <div class="envelope-front-pocket"></div>
@@ -243,12 +254,43 @@
             const wrapper = document.getElementById('envelopeWrapper');
             const title = document.getElementById('mainTitle');
             
+            // Check if the envelope is currently closed
+            const isOpening = !wrapper.classList.contains('open');
+            
             wrapper.classList.toggle('open');
             title.classList.toggle('fade-out');
-        }
 
-        function handleButtonClick() {
-            alert("Thank you! We look forward to seeing you.");
+            // Only pop confetti if the user is opening the envelope
+            if (isOpening) {
+             
+                setTimeout(() => {
+                    const duration = 2500;
+                    const end = Date.now() + duration;
+
+                    (function frame() {
+
+                        confetti({
+                            particleCount: 5,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 },
+                            colors: ['#88c9d9', '#f4a6b5', '#ffffff'] 
+                        });
+                
+                        confetti({
+                            particleCount: 5,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 },
+                            colors: ['#88c9d9', '#f4a6b5', '#ffffff']
+                        });
+
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    }());
+                }, 400); 
+            }
         }
     </script>
 </body>
