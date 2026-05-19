@@ -6,13 +6,37 @@
     <title>Boy or Girl?</title>
     <style>
         :root {
-            --bg-color: #f8f5f0;
+            /* Colors */
+            --bg-color: #a0d9ef;
             --pink-main: #f0b4bc;
             --pink-dark: #e59ba5;
             --pink-soft: #fae1e4;
             --text-dark: #4f4f4f;
             --boy-blue: #88c9d9;
             --girl-pink: #f4a6b5;
+            
+            /* Desktop Base Scale */
+            --scale: 1; 
+        }
+
+        /* --- MOBILE MEDIA QUERIES --- */
+        @media (max-width: 600px) {
+            :root {
+                --scale: 0.75; /* Shrink to 75% for tablets/large phones */
+            }
+            .main-title {
+                font-size: 2.2rem !important;
+                margin: 0 0 30px 0 !important;
+            }
+        }
+
+        @media (max-width: 400px) {
+            :root {
+                --scale: 0.65; /* Shrink to 65% for small phones */
+            }
+            .main-title {
+                font-size: 1.8rem !important;
+            }
         }
 
         body {
@@ -52,7 +76,8 @@
             cursor: pointer;
             width: 450px;
             height: 300px;
-            transform: translateY(0);
+            /* Apply the scale variable here */
+            transform: scale(var(--scale)) translateY(0);
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -199,7 +224,8 @@
 
         /* --- ANIMATION TRANSITIONS --- */
         .envelope-wrapper.open {
-            transform: translateY(60px);
+            /* Keep scale applied during the open state translation */
+            transform: scale(var(--scale)) translateY(60px);
         }
 
         .envelope-wrapper.open .top-flap {
@@ -216,7 +242,6 @@
         }
     </style>
     
-    <!-- Added canvas-confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
@@ -254,21 +279,17 @@
             const wrapper = document.getElementById('envelopeWrapper');
             const title = document.getElementById('mainTitle');
             
-            // Check if the envelope is currently closed
             const isOpening = !wrapper.classList.contains('open');
             
             wrapper.classList.toggle('open');
             title.classList.toggle('fade-out');
 
-            // Only pop confetti if the user is opening the envelope
             if (isOpening) {
-             
                 setTimeout(() => {
                     const duration = 2500;
                     const end = Date.now() + duration;
 
                     (function frame() {
-
                         confetti({
                             particleCount: 5,
                             angle: 60,
@@ -276,7 +297,6 @@
                             origin: { x: 0 },
                             colors: ['#88c9d9', '#f4a6b5', '#ffffff'] 
                         });
-                
                         confetti({
                             particleCount: 5,
                             angle: 120,
